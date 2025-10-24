@@ -1,0 +1,14 @@
+# Ignore Terraform local directories
+.terraform/
+# Ignore crash logs
+crash.log
+# Ignore Terraform plan output
+*.tfplan
+# Ignore override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+# Ignore CLI configuration
+.terraformrc
+terraform.rc

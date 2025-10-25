@@ -12,3 +12,7 @@ override.tf.json
 terraform.rc
 # Optional crash logs
 crash.log
+
+#variables and secret file for tfvars should not be pushed to github
+terraform.tfvars
+*.tfvars

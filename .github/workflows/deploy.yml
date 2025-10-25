@@ -1,0 +1,33 @@
+name: Deploy to EC2
+
+on:
+  workflow_run:
+    workflows: ["Build and Push Docker Image"]
+    types:
+      - completed
+
+#Here, I have checked if the workflow that triggered this workflow has a successful output, only then re-deploy image to ec2
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up SSH key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_PVT_KEY }}
+
+      - name: Deploy Docker container on EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST_PUBLIC_IP }} "
+            docker login ghcr.io -u falgunitagadkar -p ${{ secrets.GHCR_PAT }} &&
+            docker pull ghcr.io/falgunitagadkar/my-node-app:latest &&
+            docker stop my-node-app || true &&
+            docker rm my-node-app || true &&
+            docker run -d -p 80:8080 --name my-node-app ghcr.io/falgunitagadkar/my-node-app:latest
+          "
+        env:
+          GHCR_PAT: ${{ secrets.GHCR_PAT }}

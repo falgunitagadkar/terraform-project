@@ -23,11 +23,11 @@ jobs:
       - name: Deploy Docker container on EC2
         run: |
           ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST_PUBLIC_IP }} "
-            docker login ghcr.io -u falgunitagadkar -p ${{ secrets.GHCR_PAT }} &&
-            docker pull ghcr.io/falgunitagadkar/my-node-app:latest &&
-            docker stop my-node-app || true &&
-            docker rm my-node-app || true &&
-            docker run -d -p 80:8080 --name my-node-app ghcr.io/falgunitagadkar/my-node-app:latest
+            sudo docker login ghcr.io -u falgunitagadkar -p $GHCR_PAT
+            sudo docker pull ghcr.io/falgunitagadkar/my-node-app:latest
+            sudo docker stop my-node-app || true
+            sudo docker rm my-node-app || true
+            sudo docker run -d -p 80:8080 --name my-node-app ghcr.io/falgunitagadkar/my-node-app:lates
           "
         env:
           GHCR_PAT: ${{ secrets.GHCR_PAT }}
